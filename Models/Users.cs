@@ -9,7 +9,6 @@ public class Userlist
     // BsonId attribute indicates this property is the document identifier
     // BsonRepresentation specifies the representation of the ObjectId
     // BsonElement attribute maps the property to the "Email",Name and Password fields in MongoDB
-    // Summary
 
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
@@ -23,4 +22,18 @@ public class Userlist
 
     [BsonElement("Password")]
     public string Password { get; set; }
+}
+
+// GetDummyUser method creates and returns a dummy user object
+public class DummyData
+{
+    public static Userlist GetDummyUser()
+    {
+        return new Userlist
+        {
+            Email = "test@mail.com",
+            Name = "test name",
+            Password = "123233"
+        };
+    }
 }

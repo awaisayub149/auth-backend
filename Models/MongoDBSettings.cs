@@ -1,9 +1,6 @@
 namespace webapi.Models;
 
-//Summary
-//class MongoDBSettings included properties
-//db connection and name
-
+//class MongoDBSettings included properties of the db. connection and name
 public class MongoDBSettings
 {
     public string ConnectionURI { get; set; } = null!;

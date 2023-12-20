@@ -1,42 +1,28 @@
 # Auth App Backend
 
-## Brief description of your project.
 This .NET Core 6.0 application provides a simple and secure authentication system for managing users 
 using JSON Web Tokens (JWT). It follows a service-oriented architecture and utilizes MongoDB 
 as the backend database.
 
-## Services Architecture: Structured application architecture with distinct services.
-* MongoDB Integration: User data storage and retrieval using MongoDB.
-* Public and Protected Routes: Differentiate between public and protected routes.
+## Features
+* MongoDB.
+* JWT Authentication.
+* Protected/Public Routes
+    
+## Installation
+* Clone the repository <pre> git clone git@github.com:awaisayub149/auth-backend.git </pre>
+* Install the Dotnet Version 6.
+* Check the version dotnet --version.
+* cd auth-backend.
+* Run the project by the following command <pre>dotnet run</pre>.
 
-### Usage
-* Ensure you have the following prerequisites installed:
-
-### SDK
-* MongoDB: dotnet add package MongoDB.Driver
-* JWT: system.IdentityModel.Tokens.Jwt" Version="6.15.0"
-     Microsoft.AspNetCore.Authentic*ation.JwtBearer" Version="6.0.0"     
-## To Run
-* `dotnet run`
-
-### Routes
-* Public Login: /api/public/login
-* Protected Users: /api/protected/users
-
-### JWT Authentication
-* Used JWT tokens, while login the user token is send to the user it will store in a session and accessible in app, 
-and pass in headers for accessing the protected routes.
-### Example;-
-/api/protected/users
-
-## Services Architecture
-* Briefly describe the services architecture of your application.
-
-### MongoDB
-* Explain how MongoDB is used in your application.
-
-### Contributing
+## Routes
+* Public: /api/public/login
+* Protected: /api/protected/users
 * If you want to contribute to this project, follow these steps.
 
-Fork the repository.
-* git clone git@github.com:awaisayub149/auth-backend.git
+## JWT Authentication
+* Used JWT tokens, while login the user token is send to the user it will store in a session and accessible in app and pass in headers for accessing the protected routes.
+
+### Example;-
+/api/protected/users

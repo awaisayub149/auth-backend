@@ -1,4 +1,6 @@
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
 using webapi.Models;
 using webapi.Services;
 
@@ -9,6 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
 // Add singleton service for user operations
 builder.Services.AddSingleton<userService>();
+
+// Add MongoDB as a singleton service
+builder.Services.AddSingleton<IMongoDatabase>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
+    var client = new MongoClient(settings.ConnectionURI);
+    return client.GetDatabase(settings.DatabaseName);
+});
+
+
 // Add HttpContextAccessor to access HTTP-specific information
 builder.Services.AddHttpContextAccessor();
 

@@ -6,17 +6,19 @@ namespace webapi.Controllers
 {
     [Route("api/public/register")]
     [ApiController]
+
+    // RegisterController handles user registration operations
     public class registerController : ControllerBase
     {
         private readonly userService _uService;
-        private IConfiguration _config;
 
-        public registerController(userService uService, IConfiguration config)
+        // Constructor to inject userService and configuration dependencies
+        public registerController(userService uService)
         {
             _uService = uService;
-            _config = config;
         }
 
+        // IActionResult used to return different HTTP responses
         [HttpPost]
         public IActionResult Post([FromBody] Userlist userlist)
         {
@@ -25,7 +27,7 @@ namespace webapi.Controllers
                 return BadRequest("Invalid user data");
             }
 
-            // Assuming you have Name, Email, and Password in the Userlist model
+            // Extract user details from the userlist model
             string name = userlist.Name;
             string email = userlist.Email;
             string password = userlist.Password;
@@ -42,7 +44,7 @@ namespace webapi.Controllers
             {
                 return StatusCode(500, "Error retrieving the newly created user");
             }
-
+            // Return the newly created user in the response
             return Ok(newUser);
         }
     }

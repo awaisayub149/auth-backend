@@ -3,11 +3,10 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-// <summary>
+
 // Service responsible for generating and validating JWT tokens.
 public class TokenService
 {
-    // <summary>
     // Initializes a new instance of the <see cref="TokenService"/> class.
     private readonly string _secretKey;
     public TokenService(string secretKey)
@@ -15,7 +14,6 @@ public class TokenService
         _secretKey = secretKey;
     }
 
-    // <summary>
     // Generates a JWT token based on the provided email.
     // <param name="email">The email for which the token is generated.</param>
     // <returns>Generated JWT token.</returns>
@@ -38,10 +36,8 @@ public class TokenService
         return tokenHandler.WriteToken(token);
     }
 
-    // <summary>
     // Validates a JWT token and returns the claims principal if successful.
     // <param name="token">The JWT token to validate.</param>
-    // <returns>Claims principal if token validation is successful; otherwise, returns null.</returns>
     public ClaimsPrincipal ValidateToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
