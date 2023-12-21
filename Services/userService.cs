@@ -1,18 +1,16 @@
-// Service class responsible for user-related operations, such as validation, retrieval, and creation.
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using webapi.Models;
+using BCrypt.Net;
+
 
 namespace webapi.Services;
+
 public class userService
 {
     private readonly IMongoCollection<Userlist> _userlistCollection;
     private readonly TokenService _tokenService;
 
-    // Initializes a new instance of the userService class.
-    // <param name="mongoDBSettings">MongoDB configuration settings injected via options included: 
-    // db connection and name. 
-    // </param>
     public userService(IOptions<MongoDBSettings> mongoDBSettings)
     {
         MongoClient client = new MongoClient(mongoDBSettings.Value.ConnectionURI);
@@ -23,34 +21,36 @@ public class userService
         _tokenService = new TokenService("ADMIN125125125!@#"); // Replace with your actual secret key
     }
 
-    // Validates user credentials and generates a token upon successful validation.
     public string ValidateField(string email, string password)
     {
-        var user = this._userlistCollection.Find(x => x.Email == email && x.Password == password)
-            .FirstOrDefault();
+        var user = this._userlistCollection.Find(x => x.Email == email).FirstOrDefault();
 
         if (user == null)
         {
-            return null;
+            return null; // User not found
         }
-        var token = _tokenService.GenerateToken(email);
-        return token;
+
+        // Validate the password using BCrypt
+        if (BCrypt.Net.BCrypt.Verify(password, user.Password))
+        {
+            // Password is valid, generate token
+            var token = _tokenService.GenerateToken(email);
+            return token;
+        }
+
+        // Password is invalid
+        return null;
     }
 
-    // Retrieves a list of all users from the MongoDB collection.
-    // <returns>List of Userlist objects.</returns>
     public List<Userlist> GetUser()
     {
+        // Token validation succeeded, proceed to retrieve user information
         return _userlistCollection.Find(user => true).ToList();
     }
 
-    // Retrieves a specific user based on their email address.
-    // <param name="uEmail">User email address.</param>
-    // <returns>Userlist object corresponding to the provided email.</returns>
     public Userlist GetUser(string uEmail) =>
         _userlistCollection.Find<Userlist>(x => x.Email == uEmail).FirstOrDefault();
 
-    // Creates a new user in the MongoDB collection.
     public void CreateUser(string name, string email, string password)
     {
         var newUser = new Userlist

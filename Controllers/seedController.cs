@@ -28,8 +28,8 @@ namespace webapi.Controllers
             }
 
             // Seed dummy user data using the DummyData class
-            var dummyUser = DummyData.GetDummyUser();
-            _userCollection.InsertOne(dummyUser);
+            List<Userlist> dummyUser = DummyData.GetDummyUser();
+            _userCollection.InsertMany(dummyUser);
 
             return Ok("Data seeded successfully.");
         }

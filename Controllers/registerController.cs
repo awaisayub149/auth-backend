@@ -1,3 +1,4 @@
+using BCrypt.Net;
 using Microsoft.AspNetCore.Mvc;
 using webapi.Models;
 using webapi.Services;
@@ -6,19 +7,17 @@ namespace webapi.Controllers
 {
     [Route("api/public/register")]
     [ApiController]
-
-    // RegisterController handles user registration operations
     public class registerController : ControllerBase
     {
         private readonly userService _uService;
+        private IConfiguration _config;
 
-        // Constructor to inject userService and configuration dependencies
-        public registerController(userService uService)
+        public registerController(userService uService, IConfiguration config)
         {
             _uService = uService;
+            _config = config;
         }
 
-        // IActionResult used to return different HTTP responses
         [HttpPost]
         public IActionResult Post([FromBody] Userlist userlist)
         {
@@ -27,15 +26,17 @@ namespace webapi.Controllers
                 return BadRequest("Invalid user data");
             }
 
-            // Extract user details from the userlist model
+            // Assuming you have Name, Email, and Password in the Userlist model
             string name = userlist.Name;
             string email = userlist.Email;
             string password = userlist.Password;
 
             // You may want to add validation logic for email and password here
+            // Hash the password using BCrypt
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
             // Call the CreateUser method from the service
-            _uService.CreateUser(name, email, password);
+            _uService.CreateUser(name, email, hashedPassword);
 
             // Retrieve the newly created user
             var newUser = _uService.GetUser(email);
@@ -44,7 +45,7 @@ namespace webapi.Controllers
             {
                 return StatusCode(500, "Error retrieving the newly created user");
             }
-            // Return the newly created user in the response
+
             return Ok(newUser);
         }
     }

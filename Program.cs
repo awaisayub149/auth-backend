@@ -1,33 +1,28 @@
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
+using System;
+using System.Text;
 using webapi.Models;
 using webapi.Services;
-
-// Create a new instance of the web application builder
 var builder = WebApplication.CreateBuilder(args);
-
-// Configure MongoDB settings using options pattern
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
-// Add singleton service for user operations
 builder.Services.AddSingleton<userService>();
-
-// Add MongoDB as a singleton service
-builder.Services.AddSingleton<IMongoDatabase>(sp =>
-{
-    var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
-    var client = new MongoClient(settings.ConnectionURI);
-    return client.GetDatabase(settings.DatabaseName);
-});
-
-
-// Add HttpContextAccessor to access HTTP-specific information
 builder.Services.AddHttpContextAccessor();
-
-// Add controllers to the service collection
+builder.Services.AddAuthentication("Bearer")
+        .AddJwtBearer("Bearer", options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ADMIN125125125!@#")) // Replace with your actual secret key
+            };
+        });
 builder.Services.AddControllers();
-
-// Configure API documentation using Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
@@ -41,7 +36,6 @@ builder.Services.AddSwaggerGen(opt =>
         BearerFormat = "JWT",
         Scheme = "bearer"
     });
-
     opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -57,27 +51,20 @@ builder.Services.AddSwaggerGen(opt =>
         }
     });
 });
-
-// Build the web application
 var app = builder.Build();
-// Configure Swagger UI and Swagger middleware in development environment
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-// Enable CORS (Cross-Origin Resource Sharing)
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-// Configure method
+// Configure middleware
 app.UseRouting();
+app.UseAuthentication();  // Moved this line
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.MapControllers();
-
 app.Run();

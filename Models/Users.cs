@@ -27,13 +27,31 @@ public class Userlist
 // GetDummyUser method creates and returns a dummy user object
 public class DummyData
 {
-    public static Userlist GetDummyUser()
+    public static List<Userlist> GetDummyUser()
     {
-        return new Userlist
+        List<Userlist> dummyUsers = new List<Userlist>
         {
-            Email = "test@mail.com",
-            Name = "test name",
-            Password = "123233"
+            new Userlist
+            {
+                Email = "admin@mail.com",
+                Name = "admin type user",
+                Password = "654321"
+            },
+            new Userlist
+            {
+                Email = "public@mail.com",
+                Name = "public type user",
+                Password = "123456"
+            },
+            new Userlist
+            {
+                Email = "protected@mail.com",
+                Name = "protected type user",
+                Password = "121405"
+            },
+            // Add more users as needed
         };
+
+        return dummyUsers;
     }
 }
